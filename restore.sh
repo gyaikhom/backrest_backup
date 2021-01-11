@@ -21,13 +21,33 @@ if [ $# -eq 0 ]; then
     echo "    If unspecified, current directory is used."
     exit
 else
-    backup_file_path=${1}
+    backup_file_path=`realpath ${1}`
     if [ $# -eq 2 ]; then
 	target_folder=${2}
     else
 	target_folder=`pwd`
     fi
 fi
+
+echo "Supplied backup file: ${backup_file_path}"
+if [[ ! -e ${backup_file_path} ]]; then
+    echo "Backup file does not exists"
+    echo "Restore cancelled..."
+    exit
+else
+    if [[ ! -f ${backup_file_path} ]]; then
+	echo "Backup file is not a file"
+	echo "Restore cancelled..."
+	exit
+    else
+	if [[ ! -r ${backup_file_path} ]]; then
+	    echo "Backup file is unreadable"
+	    echo "Restore cancelled..."
+	    exit
+	fi
+    fi
+fi
+
 echo "Restore target folder: ${target_folder}"
 
 # Extract the backup folder from the supplied filepath so
