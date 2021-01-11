@@ -27,8 +27,29 @@ else
 	target_folder=`pwd`
     fi
 fi
+target_folder=`realpath ${target_folder}`
 echo "Will backup source folder: ${source_folder}"
 echo "Backup files target folder: ${target_folder}"
+
+# Check if the target is a subdirectory of the source. Since we are
+# writing into the target folder what we are archiving from the source
+# folder, we must prevent this scenario as it can archive files that
+# incompletely. For instance, if you run
+#
+# backup.sh /home/homer/test /home/homer/test/backups
+#
+# this will add the .snar (manifest file) inside the archive; however,
+# the backup file that is being created related to the .snar file is
+# not included in the archive.
+#
+# NOTE: Tar does not run into an infinite loop (archiving what it is
+# creating) as it seems to carry out the archiving outside the target
+# folder, and copies the finished archive into the target folder.
+
+if [[ ${target_folder} =~ ${source_folder}* ]]; then
+    echo "Target folder is a subdirectory of the source folder"
+    exit
+fi
 
 # Prepare backup filename suffix. This allows us to use the same
 # target folder to store all back files. The suffix is derived from
