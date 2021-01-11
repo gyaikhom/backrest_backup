@@ -48,6 +48,7 @@ echo "Backup files target folder: ${target_folder}"
 
 if [[ ${target_folder} =~ ${source_folder}* ]]; then
     echo "Target folder is a subdirectory of the source folder"
+    echo "Backup cancelled..."
     exit
 fi
 
