@@ -64,7 +64,7 @@ cd ${target_folder}
 # flexible when we run the full backup, rather than specifying a
 # specific day of the month. However, since a manifest is maintained
 # for each month, we must automatically detect when a month starts.
-if test -f "${inc_manifest_file}"; then
+if [[ -f "${inc_manifest_file}" ]]; then
     echo "Incremental backup manifest exists;"
     echo "Will run incremental backup..."
     backup_file="${datetime_inc}__${backup_suffix}.tar.bz2"
