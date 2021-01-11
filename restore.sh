@@ -48,7 +48,25 @@ else
     fi
 fi
 
-echo "Restore target folder: ${target_folder}"
+target_folder=`realpath ${target_folder}`
+echo "Supplied target folder: ${target_folder}"
+if [[ ! -e ${target_folder} ]]; then
+    echo "Target folder does not exists"
+    echo "Restore cancelled..."
+    exit
+else
+    if [[ ! -d ${target_folder} ]]; then
+	echo "Target folder is not a directory"
+	echo "Restore cancelled..."
+	exit
+    else
+	if [[ ! -w ${target_folder} ]]; then
+	    echo "Target folder is not writable"
+	    echo "Restore cancelled..."
+	    exit
+	fi
+    fi
+fi
 
 # Extract the backup folder from the supplied filepath so
 # we can find the remaining full backup (if supplied file
