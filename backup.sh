@@ -5,7 +5,7 @@
 #do_verbose="--verbose"
 do_verbose=""
 
-if [ $# -eq 0 ]; then
+if [[ $# == 0 ]]; then
     echo "USAGE:"
     echo ""
     echo "  backup.sh path-to-backup [target-folder]"
@@ -21,7 +21,7 @@ if [ $# -eq 0 ]; then
     exit
 else
     source_folder=${1}
-    if [ $# -eq 2 ]; then
+    if [[ $# == 2 ]]; then
 	target_folder=${2}
     else
 	target_folder=`pwd`
