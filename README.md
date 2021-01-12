@@ -4,6 +4,8 @@ This project contains a pair of scripts, `backup.sh` and `restore.sh`, for a sim
 
 ## Backup
 
+![Backup](figs/backup.png)
+
 The `backup.sh` script has the following features:
 
 * Backs up contents of a specified source path.
@@ -31,6 +33,8 @@ The `backup.sh` script has the following features:
 
 ## Restore
 
+![Restore](figs/restore.png)
+
 The `restore.sh` script has the following features:
 
 * Restores files and folders from existing backup files.
@@ -56,7 +60,7 @@ The `restore.sh` script has the following features:
         If unspecified, current directory is used.
 ```
 
-## Example backup usage
+## Example backup scenario
 
 ```
 backup.sh /home/homer/folder_one /home/homer/backups
@@ -87,7 +91,7 @@ Let's say he ran the second time at 10:30am for folder `/home/homer/folder_one` 
 backup.sh /home/homer/folder_two /home/homer/backups
 ```
 
-This will create an incremental backup file since we already have a full backup for January, which was create on 12 January 2021, named `2021_01__home_homer_folder_one.tar.bz2`. Since the incremental backup files are timestamped, the new incremental backup file will have the name `2021_01_15_10_30__home_homer_folder_one.tar.bz2`. This will therefore follow `2021_01_12_23_30__home_homer_folder_one.tar.bz2` in lexicographical ordering, the incremental backup generated on 12 January 2021. Thus, the encoded timestamps provides us with a means to order the incremental backups correctly.
+This will create an incremental backup file since we already have a full backup for January, which was create on 12 January 2021, named `2021_01__home_homer_folder_one.tar.bz2`. Since the incremental backup files are timestamped, the new incremental backup file will have the name `2021_01_15_10_30__home_homer_folder_one.tar.bz2`. This will therefore follow `2021_01_12_23_30__home_homer_folder_one.tar.bz2` in lexicographical ordering, the incremental backup generated on 12 January 2021. Thus, the encoded timestamps provide us with a means to order the incremental backups correctly.
 
 Thus, after this run completes, the contents of the target folder `/home/homer/backups` will have the following backup files:
 
@@ -101,9 +105,9 @@ Thus, after this run completes, the contents of the target folder `/home/homer/b
 
 ### Rationale
 
-We prefix the filenames with date and time so that it is easy to delete old backup files, which will be clumsy if the date and time were encoded within, for instance, say as `home_homer_folder_two__2021_01_15_09_20.tar.bz2`. By making the date and time a prefix of fixed length, we can detect both whether a backup file is a full backup, `2021_01__`, or an incremental backup `2021_01_12_23_30__`. Note the double '`_`'.
+We prefix the filenames with date and time so that it is easy to delete old backup files, which will be clumsy if the date and time were encoded within, for instance, say as `home_homer_folder_two__2021_01_15_09_20.tar.bz2`. By making the date and time a prefix of fixed length, we can detect both whether a backup file is a full backup, `2021_01__`, or an incremental backup `2021_01_12_23_30__`. Note the double '`_`'. Of course, with some scripting both alternatives are usable. However, for my purposes, this felt easier.
 
-## Example restore usage
+## Example restoration scenario
 
 Let's say we wish to restore contents of folder `/home/homer/folder_one` that was backed up on the 12th of January 2021 at 11:30pm, and store the restored files to the target folder `/home/homer/restores`. We will run the command as follows:
 
@@ -121,8 +125,14 @@ restore.sh /home/homer/backups/2021_01_15_10_30__home_homer_folder_one.tar.bz2 /
 
 In that case, this will first restore the full backup for that month, using `2021_01__home_homer_folder_one.tar.bz2`. Then, using the timestamp encoded in the filename, the incremental backup `2021_01_12_23_30__home_homer_folder_one.tar.bz2` will be applied first, followed by the incremental backup file `2021_01_15_10_30__home_homer_folder_one.tar.bz2`. In other words, all of the incremental backups following the full backup for that month are applied upto and including the specified incremental backup file.
 
+Inside the restoration folder `/home/homer/restores`, the contents will be extracted by first recreating the full folder path. Hence, the contents will be stored inside the folder `home/homer/folder_one` within `/home/homer/restores`.
+
 ## History
 
-I wrote this for personal use. Most of the backup solutions feel too complicated, and I do not trust them. All I wanted to do was backup my git repositories from time to time from the command line, and don't require a complicated backup solution. Since this uses the tried and tested `tar`, I know I can recover the files without requiring re-installation of complicated backup solutions. Of course, for more complicated backup and restore scenarios these simple scripts may not be suitable.
+I wrote this for personal use. Most of the backup solutions feel too complicated, and I do not trust them as I do not understand how it works. All I wanted to do was backup my git repositories from time to time from the command line, and don't require a complicated backup solution. Since scripts in this project use the tried and tested `tar` command, I know I can recover the files without requiring re-installation of complicated backup solutions. Of course, for more complicated backup and restore scenarios these simple scripts may not be suitable.
+
+## Caveats
+
+This script assumes simple names for paths. It will fail if the supplied paths have complications filenames. Furthermore, this will not work on Windows, unless you use a Bash scripting-enabled shell.
 
 END OF DOCUMENT
